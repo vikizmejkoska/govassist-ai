@@ -38,8 +38,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/services/**").permitAll()
+                        .requestMatchers("/api/requests/**").authenticated()
+                        .requestMatchers("/api/notifications/**").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers("/api/officer/**").hasRole("OFFICER")
+                        .requestMatchers("/api/officer/**").hasAnyRole("OFFICER","ADMINISTRATOR")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
