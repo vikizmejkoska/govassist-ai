@@ -1,8 +1,8 @@
 # GovAssist AI
 
-GovAssist AI is a full-stack web application for simplifying access to public administrative services through digital workflows and AI-assisted guidance.
+GovAssist AI is a full-stack web application designed to simplify access to public administrative services through digital workflows and AI-assisted guidance.
 
-The platform enables citizens to browse services, understand required documentation, submit requests, upload supporting files, and track request progress in one centralized system. It also supports officers in request processing and administrators in managing services and roles. :contentReference[oaicite:1]{index=1}
+The platform enables citizens to browse services, understand required documentation, submit requests, upload supporting files, and track request progress in one centralized system. It also supports officers in request processing and administrators in managing services and roles.
 
 ## Overview
 
@@ -11,7 +11,7 @@ GovAssist AI is designed to improve the efficiency, accessibility, and usability
 - officers
 - administrators
 
-The system also includes an AI support component for helping users understand procedures and documentation requirements. :contentReference[oaicite:2]{index=2}
+The system also includes an AI support component that helps users understand procedures and required documentation.
 
 ## Core Features
 
@@ -40,7 +40,7 @@ The system also includes an AI support component for helping users understand pr
 ### AI Support
 - Recommend required documentation
 - Answer common procedural questions
-- Assist users through an AI chatbot interface :contentReference[oaicite:3]{index=3}
+- Assist users through an AI chatbot interface
 
 ## Request Statuses
 
@@ -48,7 +48,7 @@ The system also includes an AI support component for helping users understand pr
 - In Progress
 - Additional Documents Required
 - Approved
-- Rejected :contentReference[oaicite:4]{index=4}
+- Rejected
 
 ## Non-Functional Goals
 
@@ -58,7 +58,7 @@ The system also includes an AI support component for helping users understand pr
 - Cross-device compatibility
 - Secure document handling
 - Maintainable and scalable architecture
-- Accurate and consistent data handling :contentReference[oaicite:5]{index=5}
+- Accurate and consistent data handling
 
 ## Tech Stack
 
