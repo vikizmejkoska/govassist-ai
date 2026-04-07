@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mk.govassist.config.UploadProperties;
 import mk.govassist.dto.document.RequestDocumentResponseDto;
 import mk.govassist.exception.BadRequestException;
 import mk.govassist.exception.NotFoundException;
@@ -17,22 +19,32 @@ import mk.govassist.model.ServiceRequest;
 import mk.govassist.model.User;
 import mk.govassist.repository.RequestDocumentRepository;
 import mk.govassist.repository.ServiceRequestRepository;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RequestDocumentService {
 
-    private static final long MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("pdf", "png", "jpg", "jpeg", "doc", "docx");
-    private static final Path UPLOAD_ROOT = Paths.get("uploads");
+    private static final Set<String> ALLOWED_MIME = Set.of(
+            MediaType.APPLICATION_PDF_VALUE,
+            MediaType.IMAGE_PNG_VALUE,
+            MediaType.IMAGE_JPEG_VALUE,
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
 
     private final RequestDocumentRepository requestDocumentRepository;
     private final ServiceRequestRepository serviceRequestRepository;
     private final UserService userService;
+    private final UploadProperties uploadProperties;
 
     @Transactional
     public List<RequestDocumentResponseDto> uploadDocuments(Long requestId, List<MultipartFile> files) {
@@ -43,24 +55,21 @@ public class RequestDocumentService {
                 .orElseThrow(() -> new NotFoundException("Request not found"));
 
         User current = userService.getCurrentUser();
-        boolean isOwner = request.getApplicant().getId().equals(current.getId());
-        boolean privileged = current.getRole() != null && (
-                current.getRole().getName() == RoleType.ADMINISTRATOR || current.getRole().getName() == RoleType.OFFICER);
-        if (!isOwner && !privileged) {
-            throw new BadRequestException("Not allowed to upload documents for this request");
-        }
+        validateRequestAccess(request, current, "upload documents for");
 
         ensureUploadDir();
 
+        String uploaderEmail = current.getEmail();
         return files.stream()
-                .map(file -> storeFile(request, file))
+                .map(file -> storeFile(request, file, uploaderEmail))
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<RequestDocumentResponseDto> getDocumentsByRequestId(Long requestId) {
-        serviceRequestRepository.findById(requestId)
+        ServiceRequest request = serviceRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Request not found"));
+        validateRequestAccess(request, userService.getCurrentUser(), "view documents for");
 
         return requestDocumentRepository.findByRequestId(requestId)
                 .stream()
@@ -68,12 +77,12 @@ public class RequestDocumentService {
                 .toList();
     }
 
-    private RequestDocumentResponseDto storeFile(ServiceRequest request, MultipartFile file) {
+    private RequestDocumentResponseDto storeFile(ServiceRequest request, MultipartFile file, String uploaderEmail) {
         validateFile(file);
-        String originalName = file.getOriginalFilename();
+        String originalName = sanitizeFilename(file.getOriginalFilename());
         String ext = getExtension(originalName);
         String storedName = UUID.randomUUID() + (ext.isEmpty() ? "" : "." + ext);
-        Path destination = UPLOAD_ROOT.resolve(storedName);
+        Path destination = Paths.get(uploadProperties.dir()).resolve(storedName).normalize().toAbsolutePath();
 
         try {
             Files.copy(file.getInputStream(), destination);
@@ -90,6 +99,7 @@ public class RequestDocumentService {
                 .build();
 
         RequestDocument saved = requestDocumentRepository.save(document);
+        log.info("Document uploaded requestId={} storedName={} by={}", request.getId(), storedName, uploaderEmail);
         return toDto(saved);
     }
 
@@ -97,12 +107,24 @@ public class RequestDocumentService {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("File is empty");
         }
-        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
-            throw new BadRequestException("File too large (max 5MB)");
+        if (file.getSize() > uploadProperties.maxFileSize().toBytes()) {
+            throw new BadRequestException("File too large");
         }
         String ext = getExtension(file.getOriginalFilename());
         if (!ext.isEmpty() && !ALLOWED_EXTENSIONS.contains(ext.toLowerCase())) {
             throw new BadRequestException("Invalid file type");
+        }
+        String contentType = file.getContentType();
+        if (contentType != null && !contentType.isBlank()) {
+            try {
+                MimeType mime = MimeTypeUtils.parseMimeType(contentType);
+                String normalized = mime.getType() + "/" + mime.getSubtype();
+                if (!ALLOWED_MIME.contains(normalized)) {
+                    throw new BadRequestException("Invalid file type");
+                }
+            } catch (IllegalArgumentException ex) {
+                throw new BadRequestException("Invalid file type");
+            }
         }
     }
 
@@ -115,11 +137,29 @@ public class RequestDocumentService {
 
     private void ensureUploadDir() {
         try {
-            if (Files.notExists(UPLOAD_ROOT)) {
-                Files.createDirectories(UPLOAD_ROOT);
+            Path root = Paths.get(uploadProperties.dir()).normalize().toAbsolutePath();
+            if (Files.notExists(root)) {
+                Files.createDirectories(root);
             }
         } catch (IOException e) {
             throw new BadRequestException("Could not create upload directory");
+        }
+    }
+
+    private String sanitizeFilename(String original) {
+        String cleaned = StringUtils.cleanPath(original == null ? "" : original);
+        if (cleaned.contains("..")) {
+            throw new BadRequestException("Invalid file name");
+        }
+        return cleaned;
+    }
+
+    private void validateRequestAccess(ServiceRequest request, User current, String action) {
+        boolean isOwner = request.getApplicant().getId().equals(current.getId());
+        boolean privileged = current.getRole() != null && (
+                current.getRole().getName() == RoleType.ADMINISTRATOR || current.getRole().getName() == RoleType.OFFICER);
+        if (!isOwner && !privileged) {
+            throw new BadRequestException("Not allowed to " + action + " this request");
         }
     }
 

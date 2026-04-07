@@ -2,6 +2,7 @@ package mk.govassist.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mk.govassist.dto.comment.CreateRequestCommentDto;
 import mk.govassist.dto.comment.RequestCommentResponseDto;
 import mk.govassist.exception.BadRequestException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RequestCommentService {
 
     private final RequestCommentRepository requestCommentRepository;
@@ -49,8 +51,10 @@ public class RequestCommentService {
             notificationService.createNotification(request.getApplicant(), request,
                     "Additional documents required",
                     "Please provide additional documents for your request.");
+            log.info("Additional documents requested for requestId={} by={}", requestId, current.getEmail());
         }
 
+        log.info("Comment added type={} requestId={} by={}", dto.getType(), requestId, current.getEmail());
         return toDto(saved);
     }
 

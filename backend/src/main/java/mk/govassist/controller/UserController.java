@@ -3,7 +3,7 @@ package mk.govassist.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mk.govassist.dto.user.UpdateProfileDto;
-import mk.govassist.model.User;
+import mk.govassist.dto.user.UserDetailsDto;
 import mk.govassist.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +20,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<User> me() {
-        return ResponseEntity.ok(userService.getCurrentUser());
+    public ResponseEntity<UserDetailsDto> me() {
+        return ResponseEntity.ok(userService.getCurrentUserProfile());
     }
 
     @PutMapping("/me")
-    public ResponseEntity<User> update(@Valid @RequestBody UpdateProfileDto dto) {
+    public ResponseEntity<UserDetailsDto> update(@Valid @RequestBody UpdateProfileDto dto) {
         return ResponseEntity.ok(userService.updateProfile(dto));
     }
 }

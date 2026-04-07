@@ -2,6 +2,7 @@ package mk.govassist.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mk.govassist.dto.document.RequestDocumentResponseDto;
 import mk.govassist.dto.request.CreateRequestDto;
 import mk.govassist.dto.request.RequestDetailsDto;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ServiceRequestService {
 
     private final ServiceRequestRepository serviceRequestRepository;
@@ -63,6 +65,7 @@ public class ServiceRequestService {
 
         ServiceRequest saved = serviceRequestRepository.save(request);
         createStatusNotification(saved, RequestStatus.SUBMITTED);
+        log.info("Request created id={} applicant={} serviceId={}", saved.getId(), currentUser.getEmail(), service.getId());
         return toDto(saved);
     }
 
@@ -120,6 +123,7 @@ public class ServiceRequestService {
         ServiceRequest saved = serviceRequestRepository.save(request);
 
         createStatusNotification(saved, dto.getStatus());
+        log.info("Request status updated id={} newStatus={} by={}", saved.getId(), dto.getStatus(), current.getEmail());
 
         return toDetailsDto(saved);
     }

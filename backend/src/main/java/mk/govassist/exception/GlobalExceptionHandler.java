@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message("Access denied"));
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleAuth(AuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message("Unauthorized"));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -40,6 +47,11 @@ public class GlobalExceptionHandler {
             errors.put(fe.getField(), fe.getDefaultMessage());
         }
         return ResponseEntity.badRequest().body(errors.isEmpty() ? message("Validation error") : errors);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, String>> handleUploadSize(MaxUploadSizeExceededException ex) {
+        return ResponseEntity.badRequest().body(message("File too large"));
     }
 
     @ExceptionHandler(Exception.class)

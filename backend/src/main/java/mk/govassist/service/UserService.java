@@ -2,6 +2,7 @@ package mk.govassist.service;
 
 import lombok.RequiredArgsConstructor;
 import mk.govassist.dto.user.UpdateProfileDto;
+import mk.govassist.dto.user.UserDetailsDto;
 import mk.govassist.exception.NotFoundException;
 import mk.govassist.model.User;
 import mk.govassist.repository.UserRepository;
@@ -24,12 +25,28 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    @Transactional(readOnly = true)
+    public UserDetailsDto getCurrentUserProfile() {
+        return toDetailsDto(getCurrentUser());
+    }
+
     @Transactional
-    public User updateProfile(UpdateProfileDto dto) {
+    public UserDetailsDto updateProfile(UpdateProfileDto dto) {
         User user = getCurrentUser();
         user.setFullName(dto.getFullName());
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setAddress(dto.getAddress());
-        return userRepository.save(user);
+        return toDetailsDto(userRepository.save(user));
+    }
+
+    private UserDetailsDto toDetailsDto(User user) {
+        return UserDetailsDto.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .role(user.getRole() != null ? user.getRole().getName().name() : null)
+                .build();
     }
 }

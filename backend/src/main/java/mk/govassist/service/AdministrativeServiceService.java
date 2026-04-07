@@ -1,6 +1,7 @@
 package mk.govassist.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mk.govassist.dto.service.AdministrativeServiceDto;
 import mk.govassist.dto.service.AdministrativeServiceResponseDto;
 import mk.govassist.dto.service.CreateAdministrativeServiceDto;
@@ -10,6 +11,7 @@ import mk.govassist.exception.BadRequestException;
 import mk.govassist.exception.NotFoundException;
 import mk.govassist.model.AdministrativeService;
 import mk.govassist.repository.AdministrativeServiceRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdministrativeServiceService {
 
     private final AdministrativeServiceRepository administrativeServiceRepository;
@@ -60,7 +63,9 @@ public class AdministrativeServiceService {
                 .conditions(dto.getConditions())
                 .requiredDocuments(dto.getRequiredDocuments())
                 .build();
-        return toResponse(administrativeServiceRepository.save(service));
+        AdministrativeService saved = administrativeServiceRepository.save(service);
+        log.info("Admin created service id={} title=\"{}\" by={}", saved.getId(), saved.getTitle(), currentUserEmail());
+        return toResponse(saved);
     }
 
     @Transactional
@@ -71,7 +76,9 @@ public class AdministrativeServiceService {
         service.setDescription(dto.getDescription());
         service.setConditions(dto.getConditions());
         service.setRequiredDocuments(dto.getRequiredDocuments());
-        return toResponse(administrativeServiceRepository.save(service));
+        AdministrativeService saved = administrativeServiceRepository.save(service);
+        log.info("Admin updated service id={} title=\"{}\" by={}", saved.getId(), saved.getTitle(), currentUserEmail());
+        return toResponse(saved);
     }
 
     @Transactional
@@ -79,6 +86,7 @@ public class AdministrativeServiceService {
         AdministrativeService service = administrativeServiceRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Service not found"));
         administrativeServiceRepository.delete(service);
+        log.info("Admin deleted service id={} title=\"{}\" by={}", service.getId(), service.getTitle(), currentUserEmail());
     }
 
     private AdministrativeServiceDto toDto(AdministrativeService service) {
@@ -109,6 +117,11 @@ public class AdministrativeServiceService {
                 .conditions(service.getConditions())
                 .requiredDocuments(service.getRequiredDocuments())
                 .build();
+    }
+
+    private String currentUserEmail() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null ? auth.getName() : "unknown";
     }
 
     private Pageable buildPageable(Integer page, Integer size, String sort) {
