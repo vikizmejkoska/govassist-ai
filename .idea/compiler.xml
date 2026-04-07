@@ -10,7 +10,6 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
         </processorPath>
-        <module name="govassist-ai" />
       </profile>
     </annotationProcessing>
   </component>
