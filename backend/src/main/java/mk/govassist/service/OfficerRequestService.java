@@ -6,6 +6,7 @@ import mk.govassist.dto.comment.RequestCommentResponseDto;
 import mk.govassist.dto.document.RequestDocumentResponseDto;
 import mk.govassist.dto.request.OfficerRequestDetailsDto;
 import mk.govassist.dto.request.OfficerRequestListItemDto;
+import mk.govassist.dto.request.RequestSearchItemDto;
 import mk.govassist.dto.request.UpdateRequestStatusDto;
 import mk.govassist.exception.BadRequestException;
 import mk.govassist.exception.NotFoundException;
@@ -20,6 +21,11 @@ import mk.govassist.repository.RequestDocumentRepository;
 import mk.govassist.repository.ServiceRequestRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +36,21 @@ public class OfficerRequestService {
     private final RequestCommentRepository requestCommentRepository;
     private final UserService userService;
     private final NotificationService notificationService;
+
+    @Transactional(readOnly = true)
+    public Page<RequestSearchItemDto> searchAll(RequestStatus status, Long serviceId, String q, String applicantEmail,
+                                               Integer page, Integer size, String sort) {
+        ensureOfficer();
+        Pageable pageable = buildPageable(page, size, sort);
+
+        Specification<ServiceRequest> spec = Specification.where(nullSpec());
+        spec = spec.and(optionalStatus(status))
+                   .and(optionalService(serviceId))
+                   .and(optionalTitleLike(q))
+                   .and(optionalApplicant(applicantEmail));
+
+        return serviceRequestRepository.findAll(spec, pageable).map(this::toSearchDto);
+    }
 
     @Transactional(readOnly = true)
     public List<OfficerRequestListItemDto> getAllIncomingRequests() {
@@ -157,5 +178,61 @@ public class OfficerRequestService {
             }
         }
         notificationService.createNotification(request.getApplicant(), request, title, message);
+    }
+
+    private Specification<ServiceRequest> optionalApplicant(String email) {
+        if (email == null || email.isBlank()) return nullSpec();
+        return (root, query, cb) -> cb.equal(root.get("applicant").get("email"), email);
+    }
+
+    private Specification<ServiceRequest> optionalStatus(RequestStatus status) {
+        if (status == null) return nullSpec();
+        return (root, query, cb) -> cb.equal(root.get("status"), status);
+    }
+
+    private Specification<ServiceRequest> optionalService(Long serviceId) {
+        if (serviceId == null) return nullSpec();
+        return (root, query, cb) -> cb.equal(root.get("service").get("id"), serviceId);
+    }
+
+    private Specification<ServiceRequest> optionalTitleLike(String q) {
+        if (q == null || q.isBlank()) return nullSpec();
+        String like = "%" + q.toLowerCase() + "%";
+        return (root, query, cb) -> cb.like(cb.lower(root.get("title")), like);
+    }
+
+    private Specification<ServiceRequest> nullSpec() {
+        return (root, query, cb) -> cb.conjunction();
+    }
+
+    private Pageable buildPageable(Integer page, Integer size, String sort) {
+        int p = page == null ? 0 : page;
+        int s = size == null ? 20 : size;
+        if (p < 0 || s <= 0) {
+            throw new BadRequestException("Invalid pagination parameters");
+        }
+        Sort sortObj = Sort.by("createdAt").descending();
+        if (sort != null && !sort.isBlank()) {
+            String[] parts = sort.split(",");
+            String prop = parts[0].trim();
+            if (prop.isEmpty()) prop = "createdAt";
+            Sort.Direction dir = (parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim()))
+                    ? Sort.Direction.ASC : Sort.Direction.DESC;
+            sortObj = Sort.by(dir, prop);
+        }
+        return PageRequest.of(p, s, sortObj);
+    }
+
+    private RequestSearchItemDto toSearchDto(ServiceRequest request) {
+        return RequestSearchItemDto.builder()
+                .id(request.getId())
+                .applicantEmail(request.getApplicant().getEmail())
+                .serviceId(request.getService().getId())
+                .serviceTitle(request.getService().getTitle())
+                .title(request.getTitle())
+                .status(request.getStatus())
+                .createdAt(request.getCreatedAt())
+                .updatedAt(request.getUpdatedAt())
+                .build();
     }
 }

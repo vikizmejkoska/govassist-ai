@@ -7,9 +7,12 @@ import mk.govassist.dto.document.RequestDocumentResponseDto;
 import mk.govassist.dto.request.CreateRequestDto;
 import mk.govassist.dto.request.RequestDetailsDto;
 import mk.govassist.dto.request.RequestHistoryItemDto;
+import mk.govassist.dto.request.RequestSearchItemDto;
 import mk.govassist.dto.request.UpdateRequestStatusDto;
 import mk.govassist.service.RequestDocumentService;
 import mk.govassist.service.ServiceRequestService;
+import mk.govassist.model.RequestStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +42,18 @@ public class ServiceRequestController {
     @GetMapping("/my")
     public ResponseEntity<List<RequestHistoryItemDto>> myRequests() {
         return ResponseEntity.ok(serviceRequestService.getCurrentUserRequestHistory());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<RequestSearchItemDto>> search(
+            @RequestParam(value = "status", required = false) RequestStatus status,
+            @RequestParam(value = "serviceId", required = false) Long serviceId,
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sort", required = false) String sort
+    ) {
+        return ResponseEntity.ok(serviceRequestService.searchCurrentUserRequests(status, serviceId, q, page, size, sort));
     }
 
     @GetMapping("/{id}")
