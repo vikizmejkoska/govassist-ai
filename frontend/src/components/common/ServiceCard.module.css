@@ -1,0 +1,26 @@
+.content {
+  display: grid;
+  gap: 16px;
+}
+
+.iconWrap {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+}
+
+.description {
+  min-height: 48px;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 46px rgba(16, 27, 68, 0.12);
+}

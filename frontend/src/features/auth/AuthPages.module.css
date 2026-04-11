@@ -1,0 +1,54 @@
+.form {
+  display: grid;
+  gap: 20px;
+}
+
+.header {
+  display: grid;
+  gap: 10px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.headerTitle {
+  margin: 0;
+  background: linear-gradient(180deg, #091338 0%, #1d2e72 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.04em;
+}
+
+.headerBody {
+  margin: 0;
+  color: #77809a;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hint {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  color: #6c738a;
+}
+
+.link {
+  color: #3163f0;
+  font-weight: 600;
+  transition: color 160ms ease, opacity 160ms ease;
+}
+
+.link:hover {
+  color: #2547ba;
+}
+
+.checkboxLabel {
+  color: #697288;
+}
