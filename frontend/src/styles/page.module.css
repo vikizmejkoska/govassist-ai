@@ -1,0 +1,345 @@
+.page {
+  display: grid;
+  gap: 24px;
+}
+
+.panelPage {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 204px);
+  gap: 24px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.headingGroup {
+  display: grid;
+  gap: 6px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #466be8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.description {
+  margin: 0;
+  max-width: 740px;
+  color: #6c738a;
+  line-height: 1.7;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 30px 34px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #0b1437 0%, #1d327d 100%);
+  color: #f7f9ff;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(132, 164, 255, 0.24), transparent 64%);
+}
+
+.hero::before {
+  top: -120px;
+  right: -60px;
+}
+
+.hero::after {
+  bottom: -140px;
+  left: -70px;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 16px;
+}
+
+.heroText {
+  margin: 0;
+  max-width: 620px;
+  color: rgba(247, 249, 255, 0.82);
+  line-height: 1.7;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.twoColumn {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
+  gap: 16px;
+}
+
+.panelLowerSection {
+  margin-top: auto;
+  padding-top: 28px;
+}
+
+.panelInsightsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 292px;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.dashboardInsightsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.toolbarGrow {
+  flex: 1;
+  min-width: 240px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.list {
+  display: grid;
+  gap: 14px;
+}
+
+.inlineForm {
+  display: grid;
+  gap: 16px;
+}
+
+.dialogForm {
+  padding-top: 8px;
+}
+
+.splitForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.placeholder {
+  padding: 28px;
+  border: 1px dashed rgba(70, 107, 232, 0.22);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.56);
+  color: #6c738a;
+}
+
+.rowItem {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(205, 216, 234, 0.7);
+}
+
+.rowItemClickable {
+  cursor: pointer;
+}
+
+.inlineAction {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #466be8;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.assistantCard {
+  position: relative;
+  align-self: start;
+  overflow: hidden;
+  border: 0 !important;
+  background: linear-gradient(180deg, #20306f 0%, #1b2c6c 78px, #15245d 79px, #112055 100%) !important;
+  color: #f7f9ff !important;
+  box-shadow: 0 18px 34px rgba(17, 30, 80, 0.24) !important;
+}
+
+.assistantCardCompact {
+  width: 100%;
+  max-width: 292px;
+  justify-self: end;
+}
+
+.assistantCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(122, 154, 255, 0.18), transparent 24%),
+    radial-gradient(circle at 82% 80%, rgba(80, 111, 225, 0.18), transparent 28%);
+  pointer-events: none;
+}
+
+.assistantCard::after {
+  content: "";
+  position: absolute;
+  top: 78px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.assistantCardContent {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 20px;
+  min-height: 270px;
+  padding: 22px 28px 26px !important;
+  text-align: center;
+}
+
+.assistantCardTitle {
+  max-width: 260px;
+  color: #f2f6ff !important;
+  font-size: 1.08rem !important;
+  line-height: 1.35 !important;
+  text-align: center;
+}
+
+.assistantCardText {
+  max-width: 250px;
+  margin-top: 18px !important;
+  color: rgba(239, 244, 255, 0.82) !important;
+  font-size: 0.97rem !important;
+  line-height: 1.55 !important;
+  text-align: center;
+}
+
+.assistantCardButton {
+  align-self: end;
+  justify-self: center;
+  min-width: 162px !important;
+  min-height: 42px !important;
+  padding-inline: 24px !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  color: #6d768a !important;
+  box-shadow: 0 10px 24px rgba(5, 12, 38, 0.18) !important;
+}
+
+.assistantBubble {
+  max-width: 78%;
+  padding: 12px 16px;
+  border-radius: 12px;
+}
+
+.assistantBubbleUser {
+  align-self: flex-end;
+  background: #3f6ef3;
+  color: #f7f9ff;
+}
+
+.assistantBubbleAssistant {
+  align-self: flex-start;
+  background: #ffffff;
+  color: #131a2f;
+  box-shadow: 0 12px 30px rgba(16, 27, 68, 0.08);
+}
+
+.minWidth220 {
+  min-width: 220px;
+}
+
+.minWidth180 {
+  min-width: 180px;
+}
+
+.dividerY {
+  margin: 16px 0;
+}
+
+.mutedTop {
+  margin-top: 12px;
+}
+
+.listItemSpacious {
+  padding: 10px 0;
+}
+
+.listItemCompact {
+  padding: 8px 0;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricTile {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(219, 226, 238, 0.95);
+  border-radius: 18px;
+  background: #f9fbff;
+}
+
+.metricLabel {
+  color: #7a8296;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1100px) {
+  .statsGrid,
+  .twoColumn,
+  .panelInsightsGrid,
+  .dashboardInsightsGrid,
+  .splitForm,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+}

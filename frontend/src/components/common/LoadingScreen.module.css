@@ -1,0 +1,13 @@
+.screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--mui-palette-background-default);
+}
+
+.content {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}
+
