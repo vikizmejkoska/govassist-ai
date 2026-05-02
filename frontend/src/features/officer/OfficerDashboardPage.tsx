@@ -1,4 +1,4 @@
-import { Alert, Card, CardContent, Stack, Typography } from '@mui/material';
+import { Alert, Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -54,9 +54,22 @@ export function OfficerDashboardPage() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="Officer Dashboard" description="Review the current request workload and open the officer panel for the full processing flow." />
-
-      <Typography color="text.secondary">Welcome back, {user?.fullName.split(' ')[0] ?? 'Officer'}.</Typography>
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <Typography variant="h2">Welcome back, {user?.fullName.split(' ')[0] ?? 'Officer'}!</Typography>
+          <p className={styles.heroText}>
+            Process incoming requests, leave comments, and keep citizens informed without leaving one workspace.
+          </p>
+          <div className={styles.heroActions}>
+            <Button variant="contained" onClick={() => navigate('/officer/panel')}>
+              Open Officer Panel
+            </Button>
+            <Button variant="outlined" color="inherit" onClick={() => navigate('/assistant')}>
+              Ask AI Assistant
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {error ? <Alert severity="error">{error}</Alert> : null}
 

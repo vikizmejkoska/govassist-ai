@@ -229,19 +229,17 @@ export function AppShell() {
 
       <div className={styles.content}>
         <header className={styles.topbar}>
-          <IconButton onClick={handleOpenNotifications}>
+          <IconButton className={styles.topbarBell} onClick={handleOpenNotifications}>
             <Badge color="primary" badgeContent={unreadCount} invisible={unreadCount === 0}>
               <BellIcon />
             </Badge>
           </IconButton>
           {user ? (
-            <Stack direction="row" spacing={1.2} alignItems="center">
+            <Stack direction="row" spacing={1.2} alignItems="center" className={styles.topbarUser}>
               <Avatar>{initials(user.fullName)}</Avatar>
               <Stack spacing={0}>
                 <Typography className={styles.topbarName}>{user.fullName}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {humanizeRole(user.role)}
-                </Typography>
+                <Typography className={styles.topbarRole}>{humanizeRole(user.role)}</Typography>
               </Stack>
             </Stack>
           ) : null}

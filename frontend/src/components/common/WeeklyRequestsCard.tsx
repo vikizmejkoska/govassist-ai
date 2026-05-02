@@ -81,17 +81,24 @@ export function WeeklyRequestsCard({ requests, title = 'Weekly Requests' }: Week
             <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className={styles.chart} aria-label={title} role="img">
               <defs>
                 <linearGradient id="weekly-bar-gradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#c7bcff" />
-                  <stop offset="100%" stopColor="#6f56f3" />
+                  <stop offset="0%" stopColor="#7BA3FF" />
+                  <stop offset="100%" stopColor="#3B68F5" />
                 </linearGradient>
               </defs>
 
               {ticks.map((tick) => {
                 const y = padding.top + innerHeight - (tick / yMax) * innerHeight;
+                const isBaseline = tick === 0;
 
                 return (
                   <g key={tick}>
-                    <line x1={padding.left} x2={chartWidth - padding.right} y1={y} y2={y} className={styles.gridLine} />
+                    <line
+                      x1={padding.left}
+                      x2={chartWidth - padding.right}
+                      y1={y}
+                      y2={y}
+                      className={isBaseline ? styles.baselineLine : styles.gridLine}
+                    />
                     <text x={padding.left - 8} y={y + 4} textAnchor="end" className={styles.gridLabel}>
                       {tick}
                     </text>

@@ -38,10 +38,15 @@ export function ServiceCard({
     <Card className={onCardClick ? styles.clickable : undefined} onClick={onCardClick}>
       <CardContent className={styles.content}>
         <Stack direction="row" justifyContent="space-between" spacing={1}>
-          <Stack className={styles.iconWrap} style={{ color: accent, backgroundColor: `${accent}22` }}>
+          <div className={styles.iconWrap} style={{ color: accent, backgroundColor: `${accent}1f` }}>
             {icon}
-          </Stack>
-          <Chip label={category} size="small" style={{ color: accent, backgroundColor: `${accent}1e` }} />
+          </div>
+          <Chip
+            label={category}
+            size="small"
+            className={styles.chip}
+            style={{ color: accent, backgroundColor: `${accent}1a` }}
+          />
         </Stack>
         <Stack spacing={1}>
           <Typography variant="h4">{title}</Typography>
@@ -49,19 +54,19 @@ export function ServiceCard({
             {description}
           </Typography>
         </Stack>
-        <Divider />
+        <Divider className={styles.divider} />
         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
           <Stack spacing={0.4}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" className={styles.metaLabel}>
               {eta}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" className={styles.metaLabel}>
               {fee}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center">
             {primaryLabel && onPrimary ? (
-              <Button variant="text" onClick={handlePrimaryClick}>
+              <Button variant="text" className={styles.primaryAction} onClick={handlePrimaryClick}>
                 {primaryLabel}
               </Button>
             ) : null}

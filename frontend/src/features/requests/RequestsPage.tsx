@@ -109,7 +109,6 @@ export function RequestsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Service</TableCell>
-                  <TableCell>Title</TableCell>
                   <TableCell>Created</TableCell>
                   <TableCell>Documents</TableCell>
                   <TableCell>Status</TableCell>
@@ -120,7 +119,6 @@ export function RequestsPage() {
                 {filtered.map((request) => (
                   <TableRow key={request.id} hover>
                     <TableCell>{request.serviceTitle}</TableCell>
-                    <TableCell>{request.title}</TableCell>
                     <TableCell>{formatDate(request.createdAt)}</TableCell>
                     <TableCell>{request.documentCount}</TableCell>
                     <TableCell>
