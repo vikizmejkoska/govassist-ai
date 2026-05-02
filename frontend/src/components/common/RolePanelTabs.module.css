@@ -9,11 +9,12 @@
 .tabs {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border: 1px solid rgba(194, 203, 219, 0.9);
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: #edf1f6;
+  background: #ffffff;
+  box-shadow: var(--shadow-xs);
 }
 
 .tab {
@@ -21,13 +22,27 @@
   padding: 0 14px !important;
   border: 1px solid transparent !important;
   border-radius: 999px !important;
-  color: #7c8597 !important;
+  color: var(--color-ink-500) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.005em !important;
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease !important;
+}
+
+.tab:hover {
+  background: rgba(59, 104, 245, 0.06) !important;
+  color: var(--color-ink-700) !important;
 }
 
 .tabActive {
-  border-color: rgba(188, 197, 214, 0.95) !important;
-  background: #ffffff !important;
-  color: #24304d !important;
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary-dark) !important;
+  font-weight: 600 !important;
+  box-shadow: inset 0 0 0 1px rgba(59, 104, 245, 0.18) !important;
+}
+
+.tabActive:hover {
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary-dark) !important;
 }
 
 .tabLabel {
@@ -37,11 +52,19 @@
 }
 
 .refresh {
-  min-height: 36px !important;
+  min-height: 38px !important;
   padding-inline: 14px !important;
-  border-color: rgba(194, 203, 219, 0.95) !important;
-  color: #697284 !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-ink-600) !important;
   background: #ffffff !important;
+  font-weight: 500 !important;
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease !important;
+}
+
+.refresh:hover {
+  border-color: rgba(59, 104, 245, 0.4) !important;
+  color: var(--color-primary) !important;
+  background: rgba(59, 104, 245, 0.04) !important;
 }
 
 @media (max-width: 900px) {

@@ -1,5 +1,6 @@
 import {
   Alert,
+  Button,
   Card,
   CardContent,
   MenuItem,
@@ -25,10 +26,12 @@ import { StatCard } from '@/components/common/StatCard';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { AssistantIcon, CheckIcon, RequestsIcon, ServicesIcon } from '@/components/icons/AppIcons';
 import { formatDate } from '@/lib/format';
+import { useAuth } from '@/lib/useAuth';
 import styles from '@/styles/page.module.css';
 
 export function AdminDashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserSummaryDto[]>([]);
   const [queue, setQueue] = useState<RequestSearchItemDto[]>([]);
   const [servicesCount, setServicesCount] = useState(0);
@@ -100,7 +103,22 @@ export function AdminDashboardPage() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="Admin Dashboard" description="Review the health of the platform and jump into the admin panel when you need deeper control." />
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <Typography variant="h2">Welcome back, {user?.fullName.split(' ')[0] ?? 'Admin'}!</Typography>
+          <p className={styles.heroText}>
+            Manage services, oversee users, and keep an eye on platform health from one place.
+          </p>
+          <div className={styles.heroActions}>
+            <Button variant="contained" onClick={() => navigate('/admin/panel')}>
+              Open Admin Panel
+            </Button>
+            <Button variant="outlined" color="inherit" onClick={() => navigate('/services')}>
+              Browse Services
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {message ? <Alert severity={messageSeverity}>{message}</Alert> : null}
 

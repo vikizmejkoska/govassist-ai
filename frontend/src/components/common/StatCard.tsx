@@ -1,5 +1,5 @@
 import { Card, CardContent, Stack, Typography } from '@mui/material';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import styles from './StatCard.module.css';
 
 interface StatCardProps {
@@ -10,15 +10,17 @@ interface StatCardProps {
 }
 
 export function StatCard({ icon, label, value, tone }: StatCardProps) {
+  const cardStyle = { ['--toneTint' as string]: `${tone}33` } as CSSProperties;
+
   return (
-    <Card>
+    <Card className={styles.card} style={cardStyle}>
       <CardContent>
         <Stack spacing={1.5}>
-          <Stack className={styles.toneIcon} style={{ color: tone, backgroundColor: `${tone}22` }}>
+          <div className={styles.toneIcon} style={{ color: tone, backgroundColor: `${tone}1f` }}>
             {icon}
-          </Stack>
-          <Typography variant="h3">{value}</Typography>
-          <Typography color="text.secondary">{label}</Typography>
+          </div>
+          <Typography className={styles.value}>{value}</Typography>
+          <Typography className={styles.label}>{label}</Typography>
         </Stack>
       </CardContent>
     </Card>

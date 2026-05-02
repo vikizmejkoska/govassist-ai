@@ -8,10 +8,12 @@ import type { RequestCommentDto, RequestDetailsDto, RequestDocumentDto } from '@
 import { PageHeader } from '@/components/common/PageHeader';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { formatDateTime } from '@/lib/format';
+import { useAuth } from '@/lib/useAuth';
 import styles from '@/styles/page.module.css';
 
 export function RequestDetailsPage() {
   const { requestId } = useParams();
+  const { user } = useAuth();
   const [request, setRequest] = useState<RequestDetailsDto | null>(null);
   const [documents, setDocuments] = useState<RequestDocumentDto[]>([]);
   const [comments, setComments] = useState<RequestCommentDto[]>([]);
@@ -107,7 +109,7 @@ export function RequestDetailsPage() {
                       <strong>Last updated:</strong> {formatDateTime(request.updatedAt)}
                     </Typography>
                     <Typography>
-                      <strong>Applicant:</strong> {request.applicantEmail}
+                      <strong>Applicant:</strong> {user?.fullName ?? request.applicantEmail}
                     </Typography>
                   </Stack>
                 </CardContent>
