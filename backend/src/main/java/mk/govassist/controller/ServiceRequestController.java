@@ -98,4 +98,16 @@ public class ServiceRequestController {
 
         return ResponseEntity.ok().headers(headers).body(pdf);
     }
+    @GetMapping("/{id}/documents/{documentId}/download")
+    public ResponseEntity<org.springframework.core.io.Resource> downloadDocument(
+            @PathVariable Long id,
+            @PathVariable Long documentId
+    ) {
+        org.springframework.core.io.Resource resource = requestDocumentService.downloadDocument(documentId);
+        String filename = requestDocumentService.getOriginalFileName(documentId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(resource);
+    }
 }

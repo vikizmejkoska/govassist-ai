@@ -172,4 +172,25 @@ public class RequestDocumentService {
                 .uploadedAt(doc.getUploadedAt())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public org.springframework.core.io.Resource downloadDocument(Long documentId) {
+        RequestDocument doc = requestDocumentRepository.findById(documentId)
+                .orElseThrow(() -> new NotFoundException("Document not found"));
+
+        validateRequestAccess(doc.getRequest(), userService.getCurrentUser(), "download documents for");
+
+        Path path = Paths.get(doc.getFilePath());
+        if (!Files.exists(path)) {
+            throw new NotFoundException("File not found on disk");
+        }
+
+        return new org.springframework.core.io.FileSystemResource(path);
+    }
+
+    public String getOriginalFileName(Long documentId) {
+        return requestDocumentRepository.findById(documentId)
+                .orElseThrow(() -> new NotFoundException("Document not found"))
+                .getOriginalFileName();
+    }
 }
