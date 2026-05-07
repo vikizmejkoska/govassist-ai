@@ -31,6 +31,15 @@ export const requestsApi = {
     http.get<PageResponse<RequestSearchItemDto>>(
       `/api/requests/search${query({ q: searchTerm, status: status || undefined, size: 50 })}`,
     ),
+  downloadPdf: async (requestId: number) => {
+    const blob = await http.getBlob(`/api/requests/${requestId}/pdf`);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `request-${requestId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
   details: (requestId: number) => http.get<RequestDetailsDto>(`/api/requests/${requestId}`),
   documents: (requestId: number) => http.get<RequestDocumentDto[]>(`/api/requests/${requestId}/documents`),
   uploadDocuments: (requestId: number, files: File[]) => {

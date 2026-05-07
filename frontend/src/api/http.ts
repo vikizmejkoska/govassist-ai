@@ -123,12 +123,43 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 export function registerUnauthorizedHandler(handler: (() => void) | null): void {
   onUnauthorized = handler;
 }
+async function requestBlob(path: string, options: RequestOptions = {}): Promise<Blob> {
+  const { auth = true, retry = true, headers: rawHeaders, ...rest } = options;
+  const headers = new Headers(rawHeaders);
+  const session = auth ? readSession() : null;
 
+  if (auth && session?.accessToken) {
+    headers.set('Authorization', `Bearer ${session.accessToken}`);
+  }
+
+  const response = await fetch(buildUrl(path), {
+    ...rest,
+    headers,
+    method: 'GET',
+  });
+
+  if (response.status === 401 && auth && retry && session) {
+    const nextSession = await refreshSession(session);
+    if (nextSession) {
+      return requestBlob(path, { ...options, retry: false });
+    }
+    clearSession();
+    onUnauthorized?.();
+  }
+
+  if (!response.ok) {
+    const payload = await parseResponse(response);
+    throw new ApiError(response.status, parseErrorMessage(response.status, payload), payload);
+  }
+
+  return response.blob();
+}
 export const http = {
   get: <T>(path: string, options?: RequestOptions) => request<T>(path, { ...options, method: 'GET' }),
   post: <T>(path: string, body?: HttpBody, options?: RequestOptions) =>
     request<T>(path, { ...options, method: 'POST', body }),
   put: <T>(path: string, body?: HttpBody, options?: RequestOptions) =>
     request<T>(path, { ...options, method: 'PUT', body }),
+  getBlob: (path: string, options?: RequestOptions) => requestBlob(path, options),
   delete: <T>(path: string, options?: RequestOptions) => request<T>(path, { ...options, method: 'DELETE' }),
 };

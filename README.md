@@ -52,7 +52,7 @@ GovAssist AI is a full-stack platform for managing digital public service workfl
 ### Ports
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:8081`
-- PostgreSQL: `localhost:5433`
+- PostgreSQL: `localhost:5432`
 
 ### Backend
 ```powershell
@@ -69,7 +69,7 @@ npm run dev
 
 ## Database Defaults
 
-- URL: `jdbc:postgresql://localhost:5433/postgres`
+- URL: `jdbc:postgresql://localhost:5432/postgres`
 - Username: `postgres`
 - Password: `postgres`
 

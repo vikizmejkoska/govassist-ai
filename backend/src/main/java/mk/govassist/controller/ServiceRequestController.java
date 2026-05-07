@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import mk.govassist.service.PdfService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/requests")
@@ -32,6 +35,7 @@ public class ServiceRequestController {
 
     private final ServiceRequestService serviceRequestService;
     private final RequestDocumentService requestDocumentService;
+    private final PdfService pdfService;
 
     @PostMapping
     public ResponseEntity<RequestDetailsDto> createRequest(@Valid @RequestBody CreateRequestDto dto) {
@@ -81,5 +85,17 @@ public class ServiceRequestController {
     @GetMapping("/{id}/documents")
     public ResponseEntity<List<RequestDocumentResponseDto>> listDocuments(@PathVariable Long id) {
         return ResponseEntity.ok(requestDocumentService.getDocumentsByRequestId(id));
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
+        RequestDetailsDto request = serviceRequestService.getRequestDetailsForCurrentUser(id);
+        byte[] pdf = pdfService.generateRequestPdf(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "request-" + id + ".pdf");
+
+        return ResponseEntity.ok().headers(headers).body(pdf);
     }
 }
